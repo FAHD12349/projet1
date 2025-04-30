@@ -43,6 +43,11 @@ class currentStudentView(APIView):
             return Response(serializer.data)
         except Inscription.DoesNotExist:
             return Response({"error": "Student not found"}, status=404)
-       
+        
+
+
+    def info(request):
+        return render(request,'info.html')
+    
     
     
