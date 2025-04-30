@@ -1,0 +1,203 @@
+{% extends 'nave.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPID – École Polytechnique de l'Innovation Durable</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .cover-container {
+            position: relative;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-overlay {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 33, 71, 0.8);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            color: #002147;
+            border-bottom: 2px solid #002147;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .offers-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .offer-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .offer-title {
+            font-size: 1.3rem;
+            color: #002147;
+            margin: 0 0 10px;
+        }
+
+        .info-item {
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #002147;
+        }
+
+        .employability-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+            background: #fff;
+            padding: 30px;
+            margin-top: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .employability-box h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .employability-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .employability-box li {
+            display: flex;
+            margin-bottom: 18px;
+        }
+
+        .employability-box li span:first-child {
+            color: #27ae60;
+            font-size: 1.2rem;
+            margin-right: 12px;
+        }
+
+        footer {
+            background-color: #002147;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        footer .footer-info p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .employability-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cover-container">
+        {% for ecole in ecoles %}
+            {% if ecole.cover_image %}
+                <img src="{{ ecole.cover_image.url }}" class="cover-image" alt="Image de couverture">
+            {% else %}
+                <img src="/media/photos/ChatGPT Image 19 avr. 2025, 20_58_24.png" class="cover-image" alt="Image par défaut">
+            {% endif %}
+        {% endfor %}
+        <div class="header-overlay">
+            <h1>EPID – École Polytechnique de l'Innovation Durable</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        {% for ecole in ecoles %}
+            <h2 class="section-title">Offres de formation</h2>
+            <div class="offers-container">
+                {% for offre in ecole.offre_set.all %}
+                    <div class="offer-card">
+                        <h3 class="offer-title">{{ offre.spesialiter }}</h3>
+                        <div class="info-item"><span class="info-label">Durée:</span> {{ offre.duration }} ans</div>
+                        <div class="info-item"><span class="info-label">Prix:</span> {{ offre.price }} DH</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+      
+        <div class="employability-box">
+            <div style="flex: 0 0 30%;">
+                <h2>Employabilité</h2>
+                <div style="width: 80px; height: 4px; background-color: #27ae60;"></div>
+            </div>
+            <div style="flex: 1;">
+                <p>
+                    Les alumnis de l'ENSI sont très recherchés par les entreprises tant au niveau national qu'international. 
+                    Cette reconnaissance est le fruit de plusieurs atouts distinctifs :
+                </p>
+                <ul>
+                    <li><span>✔</span> <span><strong>6 de carrières</strong> dédiés à l'accompagnement des élèves ingénieurs et des diplômés.</span></li>
+                    <li><span>✔</span> <span>Des certifications en <strong>soft skills</strong> et <strong>hard skills</strong> tout au long du parcours.</span></li>
+                    <li><span>✔</span> <span>Un réseau de <strong>240 entreprises partenaires</strong> offrant stages et emplois.</span></li>
+                    <li><span>✔</span> <span>Un réseau actif de <strong>20 000 diplômés</strong> pour mentorat et networking.</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-info">
+            {% for ecole in ecoles %}
+                <p><strong>{{ ecole.nom }}</strong></p>
+                <p>{{ ecole.adresse }}</p>
+                <p>{{ ecole.telephone }}</p>
+                <p>{{ ecole.email }}</p>
+            {% endfor %}
+        </div>
+        <p>&copy; {{ current_year }} EPID. Tous droits réservés.</p>
+    </footer>
+
+</body>
+</html>
+{% endblock %}

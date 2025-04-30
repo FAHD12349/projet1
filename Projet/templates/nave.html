@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Page de navigation</title>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .navbar {
+            background-color:rgb(7, 70, 36); /* ✅ Vert élégant */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 45px;
+            margin-right: 10px;
+        }
+
+        .logo span {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color:rgb(3, 49, 24); /* Un peu plus foncé au survol */
+        }
+
+        .content {
+            padding: 30px;
+            text-align: left;
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-links a {
+                width: 100%;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">
+            <a href="{% url 'page_info' %}" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="{% static 'image/logo-favicon.png' %}" alt="Logo">
+                <span>EPID – École Polytechnique de l'Innovation Durable</span>
+            </a>
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'page_info' %}">Accueil</a>
+            <a href="{% url 'offre' %}">Offres</a>
+            <a href="{% url 'inscription' %}">Inscription</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Déconnecter</a> 
+            {% else %}
+                <a href="{% url 'login' %}">Login</a> 
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,170 @@
+{% extends "nave.html" %}
+{% load static %}
+{% block content %}
+<title>Page d'information</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f4f6f9;
+        color: #333;
+    }
+    .navbar {
+        background-color: #2c3e50;
+        padding: 1rem 2rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+    }
+    .navbar a {
+        color: white;
+        margin: 0 15px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .main {
+        display: flex;
+        max-width: 1200px;
+        margin: 2rem auto;
+        gap: 2rem;
+        padding: 0 2rem;
+        flex-direction: row;
+    }
+    .sidebar {
+        flex: 1;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        height: 100%;
+    }
+    .sidebar img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        margin-top: auto;
+    }
+    .sidebar img:hover {
+        transform: scale(1.05);
+    }
+    .content {
+        flex: 2;
+    }
+    .card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .card h2 {
+        color: #1e90ff;
+        margin-bottom: 0.8rem;
+    }
+    .footer {
+        background: #2c3e50;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        margin-top: 2rem;
+    }
+    .info-container {
+        display: none;
+        overflow: hidden;
+        transition: all 0.5s ease-in-out;
+    }
+    .info-container.show {
+        display: block;
+    }
+    .toggle-btn {
+        background-color: #1e90ff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        font-weight: bold;
+        width: fit-content;
+        margin: 0 auto;
+    }
+    .toggle-btn:hover {
+        background-color: #007acc;
+    }
+    .info-container img {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+</style>
+
+<script>
+    function toggleInfo() {
+        const info = document.getElementById("info-container");
+        info.classList.toggle("show");
+    }
+</script>
+
+<div class="main">
+    <div class="sidebar">
+        <img src="{% static 'image/École_Polytechnique_de_lInnovation_Durable_1.png' %}" alt="École">
+        <img src="{% static 'image/historique.png' %}" alt="Historique" style="margin-top: 755px;">
+        <img src="{% static 'image/partenaires.png' %}" alt="Partenaires" style="margin-top: 755px;">
+    </div>
+
+    <div class="content">
+        <button class="toggle-btn" onclick="toggleInfo()">Voir les informations</button>
+
+        <div id="info-container" class="info-container">
+            {% with page_info as p %}
+                <div class="card">
+                    <h2>Présentation générale</h2>
+                    <p>{{ p.presontation_generale|linebreaksbr }}</p>
+                </div>
+                <div class="card">
+                    <h2>Loi</h2>
+                    <p>{{ p.loi|linebreaksbr }}</p>
+                </div>
+                <div class="card">
+                    <h2>Historique</h2>
+                    <p>{{ p.Historique|linebreaksbr }}</p>
+                </div>
+                <div class="card">
+                    <h2>Partenaires</h2>
+                    <p>{{ p.Partenaires|default:"Partenaires non disponible"|linebreaksbr }}</p>
+                </div>
+                <div class="card">
+                    <h2>Vidéo de l'école</h2>
+                    {% if p.vedio %}
+                        <video width="100%" controls>
+                            <source src="{{ p.vedio.url }}" type="video/mp4">
+                            Votre navigateur ne supporte pas la lecture de ce format vidéo.
+                        </video>
+                    {% else %}
+                        <p>Aucune vidéo disponible.</p>
+                    {% endif %}
+                </div>
+                <div class="card">
+                    <h2>Pour l'inscription</h2>
+                    <a href="{{ p.url }}" target="_blank">{{ p.url }}</a>
+                </div>
+            {% endwith %}
+
+            <div>
+                <h2>Photos</h2>
+                <img src="{% static 'image/amphithéâtre.png' %}" alt="Amphithéâtre">
+                <img src="{% static 'image/laboratoire.png' %}" alt="Laboratoire">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    &copy; 2025 École Polytechnique de l'Innovation Durable. Tous droits réservés.
+</div>
+
+{% endblock %}

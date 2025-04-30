@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations Étudiant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hidden { display: none; }
+        .student-photo {
+            max-width: 200px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .card {
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Formulaire de connexion -->
+        <div id="login-section" class="card p-4">
+            <h2 class="text-center mb-4">Connexion Étudiant</h2>
+            <div class="mb-3">
+                <label for="username" class="form-label">Email</label>
+                <input type="text" class="form-control" id="username" placeholder="email@exemple.com">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="password" placeholder="Votre mot de passe">
+            </div>
+            <button id="login-btn" class="btn btn-primary w-100">Se connecter</button>
+            <div id="login-error" class="alert alert-danger mt-3 hidden"></div>
+        </div>
+
+        <!-- Section informations étudiant -->
+        <div id="student-info" class="hidden">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1>Mes Informations</h1>
+                <button id="logout-btn" class="btn btn-outline-danger">Déconnexion</button>
+            </div>
+            
+            <div class="card p-4">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p><strong>Nom:</strong> <span id="student-name"></span></p>
+                        <p><strong>Email:</strong> <span id="student-email"></span></p>
+                        <p><strong>Âge:</strong> <span id="student-age"></span></p>
+                        <p><strong>Date d'inscription:</strong> <span id="student-date-inscription"></span></p>
+                        <p><strong>Adresse:</strong> <span id="student-adresse"></span></p>
+                        <p><strong>Téléphone:</strong> <span id="student-telephone"></span></p>
+                        <p><strong>Sexe:</strong> <span id="student-sexe"></span></p>
+                        <p><strong>Pays:</strong> <span id="student-pays"></span></p>
+                        <p><strong>Ville:</strong> <span id="student-ville"></span></p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <img id="student-photo" class="student-photo hidden" alt="Photo de profil">
+                        <p id="no-photo" class="text-muted">Pas de photo disponible</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+           
+const API_BASE_URL = 'http://localhost:8000';
+
+
+async function makeAuthRequest(url) {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        throw new Error('لا يوجد توكن وصول');
+    }
+
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (response.status === 401) {
+       
+        const newToken = await refreshToken();
+        if (newToken) {
+            return fetch(`${API_BASE_URL}${url}`, {
+                headers: {
+                    'Authorization': `Bearer ${newToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+    }
+
+    return response;
+}
+
+// دالة تجديد التوكن
+async function refreshToken() {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+        logout();
+        return null;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh: refreshToken })
+        });
+
+        if (!response.ok) {
+            throw new Error('فشل تجديد التوكن');
+        }
+
+        const data = await response.json();
+        localStorage.setItem('access_token', data.access);
+        return data.access;
+    } catch (error) {
+        console.error('خطأ في تجديد التوكن:', error);
+        logout();
+        return null;
+    }
+}
+
+// تحميل بيانات الطالب
+async function loadStudentData() {
+    try {
+        const response = await makeAuthRequest('/info/');
+        
+        if (!response.ok) {
+            throw new Error(`خطأ HTTP! الحالة: ${response.status}`);
+        }
+
+        const studentData = await response.json();
+        displayStudentInfo(studentData);
+    } catch (error) {
+        console.error('خطأ في تحميل البيانات:', error);
+        alert('خطأ في التحميل. يرجى إعادة تسجيل الدخول.');
+        logout();
+    }
+}
+
+// عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('access_token')) {
+        loadStudentData();
+    }
+});
+   </script>
+</body>
+</html>
