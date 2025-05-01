@@ -4,7 +4,7 @@ from page_assasiya.views import info_offre
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
-    path('', page_info, name='page_info'),
+    path('about/', page_info, name='about'),
     
     
 ]

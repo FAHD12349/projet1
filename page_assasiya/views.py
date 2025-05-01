@@ -10,3 +10,5 @@ def info_offre(request):
     return render(request, "page_assasiya.html", { "ecoles": ecoles, "offres": offres, "current_year": current_year })
 
 
+def home(request):
+    return render(request,'home.html')
