@@ -1,204 +1,519 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informations Étudiant</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% extends "nave.html" %}
+{% block content %}
+    <title>Mes Informations - EPID</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        .student-photo {
-            max-width: 200px;
-            border-radius: 5px;
-            margin-top: 10px;
+        :root {
+            --primary-color: #095a2c; /* Couleur EPID */
+            --accent-color: #16c172;
+            --card-bg: #ffffff;
+            --card-shadow: rgba(0, 0, 0, 0.08);
+            --text-muted-light: #6c757d;
+            --spinner-color: var(--primary-color);
         }
-        .card {
-            margin-top: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif; /* Assurez-vous d'importer Poppins si vous l'utilisez ailleurs */
+        }
+
+
+
+        .profile-card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 15px var(--card-shadow);
+            margin-bottom: 2rem;
+            overflow: hidden; /* Pour s'assurer que le contenu ne dépasse pas */
+            position: relative; /* Pour le positionnement du spinner */
+            min-height: 300px; /* Hauteur minimale pendant le chargement */
+        }
+
+        .profile-card .card-body {
+            padding: 2rem;
+        }
+
+        .student-photo-container {
+            text-align: center;
+            padding: 1rem;
+            background-color: #f1f3f5; /* Léger fond pour la photo */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px; /* Assurer une hauteur minimale */
+        }
+
+        .student-photo {
+            max-width: 100%;
+            height: auto;
+            max-height: 200px; /* Limiter la hauteur max */
+            border-radius: 0.375rem; /* Match Bootstrap */
+            border: 3px solid var(--card-bg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            object-fit: cover; /* Pour éviter la déformation */
+        }
+
+        #no-photo-placeholder {
+            color: var(--text-muted-light);
+            font-style: italic;
+        }
+
+        .info-list {
+            display: grid;
+            grid-template-columns: auto 1fr; /* Colonne label auto, colonne valeur prend le reste */
+            gap: 0.8rem 1.5rem; /* Espace vertical et horizontal */
+            font-size: 0.95rem;
+        }
+
+        .info-list dt {
+            font-weight: 600;
+            color: var(--primary-color);
+            grid-column: 1; /* Colonne 1 */
+            text-align: right;
+        }
+
+        .info-list dt::after {
+            content: ":"; /* Ajouter deux-points après le label */
+        }
+
+        .info-list dd {
+            grid-column: 2; /* Colonne 2 */
+            margin-bottom: 0; /* Reset Bootstrap default */
+            color: #343a40;
+        }
+
+        /* --- Loading State --- */
+        .loading-spinner {
+            display: none; /* Caché par défaut */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .profile-card.is-loading .card-body-content {
+            opacity: 0.3; /* Estomper le contenu */
+            pointer-events: none; /* Désactiver interaction pendant chargement */
+        }
+
+        .profile-card.is-loading .loading-spinner {
+            display: block; /* Afficher le spinner */
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: var(--spinner-color);
+        }
+        /* --- End Loading State --- */
+
+        /* --- Error Message --- */
+        #error-message {
+            margin-top: 1rem;
+        }
+
+        /* Bouton Logout */
+        #logout-btn {
+            font-weight: 500;
+        }
+        #logout-btn i {
+            margin-left: 0.3rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .info-list {
+                grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+                gap: 0.3rem;
+            }
+            .info-list dt {
+                text-align: left;
+                margin-bottom: 0.1rem; /* Petit espace avant la valeur */
+                color: #555;
+            }
+             .info-list dt::after {
+                content: ""; /* Pas de deux-points sur mobile */
+            }
+            .info-list dd {
+                margin-bottom: 0.7rem; /* Espace entre les paires clé/valeur */
+                padding-left: 0.5rem;
+                 border-left: 3px solid var(--accent-color);
+            }
+            .student-photo-container {
+                border-bottom: 1px solid #dee2e6;
+                 min-height: auto;
+                 padding-bottom: 1.5rem;
+            }
+
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <!-- Section informations étudiant -->
-        <div id="student-info">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h1>Mes Informations</h1>
-                <button id="logout-btn" class="btn btn-outline-danger">Déconnexion</button>
-            </div>
-            
-            <div class="alert alert-danger mt-3 mb-3 d-none" id="error-message"></div>
-            
-            <div class="card p-4">
-                <div class="row">
-                    <div class="col-md-8">
-                        <p><strong>Nom:</strong> <span id="student-name">Chargement...</span></p>
-                        <p><strong>Email:</strong> <span id="student-email">Chargement...</span></p>
-                        <p><strong>Âge:</strong> <span id="student-age">Chargement...</span></p>
-                        <p><strong>Date d'inscription:</strong> <span id="student-date-inscription">Chargement...</span></p>
-                        <p><strong>Date de naissance:</strong> <span id="student-date-naissance">Chargement...</span></p>
-                        <p><strong>Adresse:</strong> <span id="student-adresse">Chargement...</span></p>
-                        <p><strong>Téléphone:</strong> <span id="student-telephone">Chargement...</span></p>
-                        <p><strong>Sexe:</strong> <span id="student-sexe">Chargement...</span></p>
-                        <p><strong>Niveau:</strong> <span id="student-niveau">Chargement...</span></p>
-                        <p><strong>Pays:</strong> <span id="student-pays">Chargement...</span></p>
-                        <p><strong>Ville:</strong> <span id="student-ville">Chargement...</span></p>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <img id="student-photo" class="student-photo d-none" alt="Photo de profil">
-                        <p id="no-photo" class="text-muted">Pas de photo disponible</p>
-                    </div>
+
+
+    <div class="container">
+        <!-- Message d'erreur global -->
+        <div class="alert alert-danger d-none" role="alert" id="error-message" aria-live="assertive"></div>
+
+        <!-- Carte principale -->
+        <div class="profile-card" id="info-card">
+            <!-- Spinner de chargement -->
+            <div class="loading-spinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Chargement...</span>
                 </div>
             </div>
-        </div>
-    </div>
+
+            <!-- Contenu réel de la carte -->
+            <div class="card-body-content">
+                <div class="row g-0"> <!-- g-0 pour enlever les gouttières Bootstrap par défaut -->
+                    <!-- Colonne Informations Textuelles -->
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4" style="color: var(--primary-color);">Détails Personnels</h5>
+                            <dl class="info-list">
+                                <dt>Nom Complet</dt>
+                                <dd id="student-name-value">-</dd>
+
+                                <dt>Email</dt>
+                                <dd id="student-email-value">-</dd>
+
+                                <dt>Âge</dt>
+                                <dd id="student-age-value">-</dd>
+
+                                <dt>CNIE</dt>
+                                <dd id="student-CNIE-value">-</dd>
+
+                                <dt>specialites</dt>
+                                <dd id="student-specialites-value">-</dd>
+
+                                <dt>Date de naissance</dt>
+                                <dd id="student-dob-value">-</dd>
+
+                                <dt>Sexe</dt>
+                                <dd id="student-gender-value">-</dd>
+
+                                <dt>Téléphone</dt>
+                                <dd id="student-phone-value">-</dd>
+
+                                <dt>Adresse</dt>
+                                <dd id="student-address-value">-</dd>
+
+                                <dt>Ville</dt>
+                                <dd id="student-city-value">-</dd>
+
+                                <dt>Pays</dt>
+                                <dd id="student-country-value">-</dd>
+
+                                <dt>Niveau</dt>
+                                <dd id="student-level-value">-</dd>
+
+                                <dt>Inscrit le</dt>
+                                <dd id="student-reg-date-value">-</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <!-- Colonne Photo -->
+                    <div class="col-md-4 student-photo-container">
+                        <img id="student-photo" class="student-photo d-none" alt="Photo de profil">
+                        <p id="no-photo-placeholder" class="d-none">Aucune photo</p>
+                    </div>
+                </div>
+            </div> <!-- Fin card-body-content -->
+        </div> <!-- Fin profile-card -->
+
+    </div> <!-- Fin container -->
 
     <script>
-// Configuration de l'API
-const API_BASE_URL = 'http://localhost:8000';
-
-// Charger les données au chargement de la page
-document.addEventListener('DOMContentLoaded', function() {
-    loadStudentData();
-    
-    // Gestionnaire d'événement pour le bouton de déconnexion
-    document.getElementById('logout-btn').addEventListener('click', function() {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        window.location.href = '/login/'; // Rediriger vers la page de connexion
-    });
-});
-
-// Fonction pour récupérer les informations de l'étudiant
-async function loadStudentData() {
-    try {
-        const token = localStorage.getItem('access_token');
         
-        if (!token) {
-            showError('Pas de token d\'accès. Veuillez vous connecter.');
-            setTimeout(() => {
-                window.location.href = '/login/'; // Rediriger vers la page de connexion
-            }, 2000);
-            return;
+        // Configuration de l'API (à adapter si nécessaire)
+        const API_BASE_URL = 'http://localhost:8000'; // Ou l'URL de votre API déployée
+
+        // Éléments du DOM
+        const infoCard = document.getElementById('info-card');
+        const cardContent = infoCard.querySelector('.card-body-content');
+        const errorElement = document.getElementById('error-message');
+        const logoutButton = document.getElementById('logout-btn');
+        const photoElement = document.getElementById('student-photo');
+        const noPhotoPlaceholder = document.getElementById('no-photo-placeholder');
+
+        // IDs des éléments où afficher les données
+        const dataFields = {
+            name: 'student-name-value',
+            email: 'student-email-value',
+            age: 'student-age-value',
+            CNIE: 'student-CNIE-value', // CNIE
+            specialites: 'student-specialites-value', // CNE
+            dob: 'student-dob-value', // Date of Birth
+            gender: 'student-gender-value',
+            phone: 'student-phone-value',
+            address: 'student-address-value',
+            city: 'student-city-value',
+            country: 'student-country-value',
+            level: 'student-level-value',
+            regDate: 'student-reg-date-value', // Registration Date
+        };
+
+        // --- Initialisation ---
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudentData();
+
+            logoutButton.addEventListener('click', logoutUser);
+        });
+
+        // --- Fonctions principales ---
+
+        /**
+         * Charge les données de l'étudiant depuis l'API.
+         */
+        async function loadStudentData() {
+            setLoadingState(true);
+            clearError();
+
+            try {
+                const token = localStorage.getItem('access_token');
+
+                if (!token) {
+                    showError('Authentification requise. Redirection vers la page de connexion...');
+                    redirectToLogin(2000);
+                    return;
+                }
+
+                const response = await makeApiRequest('/api/current-student/');
+
+                if (!response.ok) {
+                    // Si 401, tenter de rafraîchir le token
+                    if (response.status === 401) {
+                        console.log('Token expiré, tentative de rafraîchissement...');
+                        const refreshed = await refreshAccessToken();
+                        if (refreshed) {
+                            // Important : relancer la requête originale après succès
+                            console.log('Token rafraîchi, nouvelle tentative de chargement des données...');
+                            return loadStudentData(); // Relance la fonction
+                        } else {
+                            // Echec du rafraîchissement, déconnexion
+                            showError('Votre session a expiré. Redirection vers la page de connexion...');
+                            logoutUser(2000); // Déconnecte et redirige
+                            return; // Arrête l'exécution ici
+                        }
+                    }
+                    // Gérer les autres erreurs HTTP
+                    throw new Error(`Erreur serveur : ${response.status} ${response.statusText}`);
+                }
+
+                const studentDataArray = await response.json();
+
+                 // L'API renvoie un tableau, on prend le premier élément.
+                if (studentDataArray && studentDataArray.length > 0) {
+                    displayStudentInfo(studentDataArray[0]);
+                } else {
+                    showError('Aucune donnée étudiante trouvée pour cet utilisateur.');
+                    // Afficher des placeholders ou un état vide
+                    Object.values(dataFields).forEach(id => {
+                         const el = document.getElementById(id);
+                         if(el) el.textContent = 'Non disponible';
+                    });
+                    noPhotoPlaceholder.classList.remove('d-none');
+                    photoElement.classList.add('d-none');
+                }
+
+            } catch (error) {
+                console.error('Erreur lors du chargement des données étudiant:', error);
+                showError(`Impossible de charger les informations : ${error.message}`);
+            } finally {
+                setLoadingState(false); // Assure que le chargement est désactivé même en cas d'erreur
+            }
         }
-        
-        // Utiliser l'endpoint actuel
-        const response = await fetch(`${API_BASE_URL}/api/current-student/`, {
-            method: 'GET',
-            headers: {
+
+        /**
+         * Gère la déconnexion de l'utilisateur.
+         * @param {number} [redirectDelay=0] - Délai avant redirection (ms).
+         */
+        function logoutUser(redirectDelay = 0) {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            console.log('Utilisateur déconnecté.');
+            redirectToLogin(redirectDelay);
+        }
+
+        /**
+         * Tente de rafraîchir le token d'accès en utilisant le token de rafraîchissement.
+         * @returns {Promise<boolean>} - True si le rafraîchissement a réussi, false sinon.
+         */
+        async function refreshAccessToken() {
+            const refreshToken = localStorage.getItem('refresh_token');
+            if (!refreshToken) {
+                console.error('Aucun token de rafraîchissement disponible.');
+                return false;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh: refreshToken }),
+                });
+
+                if (!response.ok) {
+                    // Si le refresh token est invalide/expiré (souvent 401)
+                    console.error(`Échec du rafraîchissement: ${response.status}`);
+                    return false;
+                }
+
+                const data = await response.json();
+                localStorage.setItem('access_token', data.access); // Mettre à jour le token d'accès
+                console.log('Token d\'accès rafraîchi.');
+                return true;
+
+            } catch (error) {
+                console.error('Erreur réseau lors du rafraîchissement du token:', error);
+                return false;
+            }
+        }
+
+
+         async function makeApiRequest(endpoint, options = {}) {
+            const token = localStorage.getItem('access_token');
+            const headers = {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (response.status === 401) {
-            // Le token est peut-être expiré, essayer de le rafraîchir
-            const refreshed = await refreshAccessToken();
-            if (refreshed) {
-                // Réessayer avec le nouveau token
-                return loadStudentData();
+                'Content-Type': 'application/json',
+                ...options.headers, // Permet de surcharger ou ajouter des headers
+            };
+
+            // Assurer que GET est la méthode par défaut
+            const method = options.method || 'GET';
+
+            return fetch(`${API_BASE_URL}${endpoint}`, {
+                ...options,
+                 method: method,
+                headers: headers,
+             });
+        }
+
+
+        // --- Fonctions utilitaires ---
+
+        /**
+         * Affiche les informations de l'étudiant dans le DOM.
+         * @param {object} data - L'objet contenant les données de l'étudiant.
+         */
+        function displayStudentInfo(data) {
+             // Utiliser les noms de clés retournés par l'API
+             // Assurez-vous que ces clés correspondent à celles de votre API Django
+            updateField(dataFields.name, `${data.nom || ''} ${data.pernom || ''}`.trim()); // 'pernom' comme dans vos données
+            updateField(dataFields.email, data.email);
+            updateField(dataFields.age, data.age);
+            updateField(dataFields.CNIE, data.CNIE); // CNIE
+            updateField(dataFields.specialites, data.specialites); // CNE
+            updateField(dataFields.dob, formatDate(data.date_naissance)); // Date de naissance
+            updateField(dataFields.gender, data.sexe);
+            updateField(dataFields.phone, data.telephone);
+            updateField(dataFields.address, data.adresse);
+            updateField(dataFields.city, data.ville);
+            updateField(dataFields.country, data.pays);
+            updateField(dataFields.level, data.niveau);
+            updateField(dataFields.regDate, formatDate(data.date_inscription)); // Date d'inscription
+
+            // Gestion de la photo
+            if (data.photo && data.photo.trim() !== '') {
+                // Si l'URL est relative, la préfixer avec la base de l'API si nécessaire
+                let photoUrl = data.photo;
+                // Exemple : si l'API retourne /media/photos/image.jpg et qu'il faut l'URL complète
+                 // if (!photoUrl.startsWith('http')) {
+                 //    photoUrl = `${API_BASE_URL}${photoUrl}`;
+                 // }
+                photoElement.src = photoUrl;
+                photoElement.classList.remove('d-none');
+                noPhotoPlaceholder.classList.add('d-none');
             } else {
-                showError('Session expirée. Redirection vers la page de connexion...');
-                setTimeout(() => {
-                    window.location.href = '/login/';
-                }, 2000);
-                return;
+                photoElement.classList.add('d-none');
+                noPhotoPlaceholder.classList.remove('d-none');
             }
         }
-        
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+
+         /**
+         * Met à jour le contenu textuel d'un élément du DOM.
+         * @param {string} elementId - L'ID de l'élément à mettre à jour.
+         * @param {string|number|null} value - La valeur à afficher.
+         * @param {string} [defaultValue='-'] - La valeur à afficher si `value` est vide ou null.
+         */
+         function updateField(elementId, value, defaultValue = '-') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = (value !== null && value !== undefined && value !== '') ? value : defaultValue;
+            } else {
+                console.warn(`Élément non trouvé pour l'ID : ${elementId}`);
+            }
         }
 
-        const studentData = await response.json();
-        
-        // La réponse est un tableau, prendre le premier élément si disponible
-        if (studentData && studentData.length > 0) {
-            displayStudentInfo(studentData[0]);
-        } else {
-            showError('Aucune donnée étudiante disponible.');
+        /**
+         * Définit l'état de chargement de la carte d'information.
+         * @param {boolean} isLoading - True pour activer l'état de chargement, false pour le désactiver.
+         */
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                infoCard.classList.add('is-loading');
+                // Optionnel: désactiver le bouton logout pendant le chargement initial
+                 // logoutButton.disabled = true;
+            } else {
+                infoCard.classList.remove('is-loading');
+                // logoutButton.disabled = false;
+            }
         }
-    } catch (error) {
-        console.error('Erreur lors du chargement des données:', error);
-        showError('Erreur lors du chargement des données: ' + error.message);
-    }
-}
 
-// Fonction pour rafraîchir le token d'accès
-async function refreshAccessToken() {
-    const refreshToken = localStorage.getItem('refresh_token');
-    
-    if (!refreshToken) {
-        console.error('Pas de token de rafraîchissement disponible');
-        return false;
-    }
-    
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/token/refresh/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                refresh: refreshToken
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Échec du rafraîchissement du token');
+        /**
+         * Affiche un message d'erreur dans la zone dédiée.
+         * @param {string} message - Le message d'erreur à afficher.
+         */
+        function showError(message) {
+            errorElement.textContent = message;
+            errorElement.classList.remove('d-none');
         }
-        
-        const data = await response.json();
-        localStorage.setItem('access_token', data.access);
-        console.log('Token d\'accès rafraîchi avec succès');
-        return true;
-    } catch (error) {
-        console.error('Erreur lors du rafraîchissement du token:', error);
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        return false;
-    }
-}
 
-// Fonction pour afficher les informations de l'étudiant
-function displayStudentInfo(data) {
-    // Afficher les données dans les éléments HTML correspondants
-    document.getElementById('student-name').textContent = 
-        (data.nom || '') + ' ' + (data.pernom || ''); // Utiliser pernom comme dans le modèle
-    document.getElementById('student-email').textContent = data.email || '';
-    document.getElementById('student-age').textContent = data.age || 'Non spécifié';
-    document.getElementById('student-date-inscription').textContent = formatDate(data.date_inscription);
-    document.getElementById('student-date-naissance').textContent = formatDate(data.date_naissance);
-    document.getElementById('student-adresse').textContent = data.adresse || 'Non spécifiée';
-    document.getElementById('student-telephone').textContent = data.telephone || 'Non spécifié';
-    document.getElementById('student-sexe').textContent = data.sexe || 'Non spécifié';
-    document.getElementById('student-niveau').textContent = data.niveau || 'Non spécifié';
-    document.getElementById('student-pays').textContent = data.pays || 'Non spécifié';
-    document.getElementById('student-ville').textContent = data.ville || 'Non spécifié';
-    
-    // Gestion de la photo
-    if (data.photo) {
-        document.getElementById('student-photo').src = data.photo;
-        document.getElementById('student-photo').classList.remove('d-none');
-        document.getElementById('no-photo').classList.add('d-none');
-    } else {
-        document.getElementById('student-photo').classList.add('d-none');
-        document.getElementById('no-photo').classList.remove('d-none');
-    }
-}
+        /**
+         * Efface le message d'erreur.
+         */
+        function clearError() {
+            errorElement.textContent = '';
+            errorElement.classList.add('d-none');
+        }
 
-// Fonction pour afficher les erreurs
-function showError(message) {
-    const errorElement = document.getElementById('error-message');
-    errorElement.textContent = message;
-    errorElement.classList.remove('d-none');
-}
+        /**
+         * Redirige l'utilisateur vers la page de connexion après un délai.
+         * @param {number} [delay=0] - Délai en millisecondes avant redirection.
+         */
+        function redirectToLogin(delay = 0) {
+            setTimeout(() => {
+                // Adapter l'URL si votre page de login est différente
+                window.location.href = '/login/'; // Assurez-vous que cette URL est correcte
+            }, delay);
+        }
 
-// Fonction pour formater une date
-function formatDate(dateString) {
-    if (!dateString) return 'Non spécifiée';
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('fr-FR', options);
-}
+        /**
+         * Formate une chaîne de date (ou retourne une valeur par défaut).
+         * @param {string | null | undefined} dateString - La chaîne de date à formater.
+         * @returns {string} - La date formatée ou 'Non spécifiée'.
+         */
+        function formatDate(dateString) {
+            if (!dateString) return 'Non spécifiée';
+            try {
+                // Options pour un formatage clair en français
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                // Utilise 'fr-MA' pour le format marocain si pertinent, sinon 'fr-FR'
+                return new Date(dateString).toLocaleDateString('fr-MA', options);
+            } catch (e) {
+                console.error("Erreur de formatage de date pour:", dateString, e);
+                return dateString; // Retourne la chaîne originale en cas d'erreur
+            }
+        }
     </script>
+
+    <!-- Optionnel : Bootstrap JS Bundle (si vous avez besoin de composants JS de Bootstrap) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
 </body>
-</html>
+{% endblock %}

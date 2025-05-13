@@ -1,10 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Inscription(models.Model):
+  
     nom=models.CharField(max_length=50)
     pernom=models.CharField(max_length=50)
     email=models.EmailField()
     age=models.IntegerField()
+    CNIE=models.CharField(max_length=50, unique=True)
+    specialites =models.CharField(max_length=50)
     date_inscription=models.DateField()
     date_naissance=models.DateField()
     adresse=models.TextField()

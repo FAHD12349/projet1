@@ -1,4 +1,5 @@
 {% extends 'nave.html' %}
+{% load static %}
 {% block content %}
 
   <style>
@@ -84,6 +85,7 @@
       position: relative;
       z-index: 2;
       max-width: 800px;
+      color: rgb(255, 255, 255); /* Application directe de la couleur au lieu d'utiliser une variable */
     }
     
     .hero h1 {
@@ -92,8 +94,21 @@
       font-weight: 700;
       margin-bottom: 1.5rem;
       letter-spacing: 1px;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      color: rgb(20, 70, 121); /* Application directe de la couleur au lieu d'utiliser une variable */
+      text-shadow: 0 2px 10px rgba(0, 238, 255, 0.3);
       animation: fadeInDown 1s ease-out;
+    }
+    
+    /* Définition de l'animation fadeInDown si elle n'est pas déjà définie ailleurs */
+    @keyframes fadeInDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
     .hero p {
@@ -451,7 +466,7 @@
   <!-- NAV will be inserted here -->
 
   <section class="hero">
-    <div class="hero-content">
+    <div class="hero-content4">
       <h1>Excellence in Education</h1>
       <p>Discover a transformative learning experience that prepares you for success in a rapidly changing world. Join our community of innovators, leaders, and visionaries.</p>
       <a href="/inscription/" class="btn">Begin Your Journey</a>
@@ -468,7 +483,7 @@
         <p>With state-of-the-art facilities, internationally recognized faculty, and a supportive community, we offer an educational experience that goes beyond the classroom.</p>
       </div>
       <div class="about-image">
-        <img src="https://source.unsplash.com/800x600/?campus,modern" alt="Modern Campus">
+        <img src="{% static 'image/1im.png' %}" alt="Modern Campus"> 
       </div>
     </div>
   </section>
@@ -478,7 +493,8 @@
     <div class="courses-container">
       <div class="course">
         <div class="course-img">
-          <img src="https://source.unsplash.com/600x400/?technology,coding" alt="Computer Science">
+          <img src="{% static 'image/0000.jpg' %}" alt="Computer Science">
+
         </div>
         <div class="course-content">
           <h3>Computer Science & Innovation</h3>
@@ -489,7 +505,7 @@
       
       <div class="course">
         <div class="course-img">
-          <img src="https://source.unsplash.com/600x400/?research,laboratory" alt="Science Lab">
+          <img src="{% static 'image/0001.jpg'%}" alt="Science Lab">
         </div>
         <div class="course-content">
           <h3>Advanced Natural Sciences</h3>
@@ -500,7 +516,7 @@
       
       <div class="course">
         <div class="course-img">
-          <img src="https://source.unsplash.com/600x400/?creative,design" alt="Art & Design">
+          <img src="{% static 'image/0010.jpg' %}" alt="Art & Design">
         </div>
         <div class="course-content">
           <h3>Creative Arts & Design</h3>
@@ -535,22 +551,22 @@
     <h2>Campus Life</h2>
     <div class="gallery-container">
       <div class="gallery-item">
-        <img src="https://source.unsplash.com/600x400/?library,modern" alt="Modern Library">
+        <img src="{% static 'image/1.jpeg' %}" alt="Modern Library">
       </div>
       <div class="gallery-item">
-        <img src="https://source.unsplash.com/600x400/?sports,university" alt="Sports Facilities">
+        <img src="{% static  'image/2.jpg'%}" alt="Sports Facilities">
       </div>
       <div class="gallery-item">
-        <img src="https://source.unsplash.com/600x400/?campus,event" alt="Campus Events">
+        <img src="{% static  'image/3.jpg'%}" alt="Campus Events">
       </div>
       <div class="gallery-item">
-        <img src="https://source.unsplash.com/600x400/?laboratory,research" alt="Research Facilities">
+        <img src="{% static 'image/4.jpg'%}" alt="Research Facilities">
       </div>
       <div class="gallery-item">
-        <img src="https://source.unsplash.com/600x400/?student,collaboration" alt="Student Collaboration">
+        <img src="{%static 'image/5.jpg' %}" alt="Student Collaboration">
       </div>
       <div class="gallery-item">
-        <img src="https://source.unsplash.com/600x400/?graduation,ceremony" alt="Graduation">
+        <img src="{%static 'image/6.jpg'%}" alt="Graduation">
       </div>
     </div>
   </section>

@@ -15,7 +15,8 @@
             --accent-color: #16c172;
             --light-color: #f9fafb;
             --dark-color: #1a202c;
-            --text-color: #ffffff;
+            --text-color:rgb(255, 253, 253);
+            --text-color2:rgb(15, 12, 12);
             --gray-color: #718096;
             --border-radius: 10px;
             --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07), 0 5px 15px rgba(0, 0, 0, 0.05);
@@ -33,8 +34,9 @@
             font-family: 'Montserrat', sans-serif;
             background-color: var(--light-color);
             color: var(--text-color);
-            line-height: 1.7;
+            line-height: 1.65;
             font-weight: 400;
+            font-size: 0.95rem
         }
 
         h1, h2, h3, h4, h5 {
@@ -48,6 +50,7 @@
             position: relative;
             height: 550px;
             overflow: hidden;
+            font-size: 0.95rem
         }
 
         .cover-image {
@@ -93,6 +96,7 @@
             width: 60%;
             height: 3px;
             background-color: var(--secondary-color);
+            
         }
         
         .header-overlay p {
@@ -148,6 +152,7 @@
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
             margin-bottom: 60px;
+            color: var(--text-color2, rgb(15, 12, 12)); /* Utilisation correcte de la variable avec valeur de secours */
         }
 
         .offer-card {
@@ -247,6 +252,7 @@
             box-shadow: var(--box-shadow);
             position: relative;
             overflow: hidden;
+            color: var(--text-color2, rgb(15, 12, 12)); /* Utilisation correcte de la variable avec valeur de secours */
         }
         
         .employability-box::before {
@@ -257,6 +263,7 @@
             width: 15px;
             height: 100%;
             background-color: var(--secondary-color);
+            /* Utilisation correcte de la variable avec valeur de secours */
         }
 
         .employability-box h2 {
@@ -265,6 +272,7 @@
             color: var(--primary-color);
             margin-bottom: 15px;
             position: relative;
+            
         }
         
         .employability-box .divider {
@@ -272,12 +280,13 @@
             height: 4px;
             background-color: var(--secondary-color);
             margin-bottom: 25px;
+            
         }
 
         .employability-box p {
             margin-bottom: 25px;
             font-size: 1.05rem;
-            color: var(--text-color);
+            color: var(--text-color2, rgb(15, 12, 12)); /* Utilisation correcte de la variable avec valeur de secours */
         }
 
         .employability-box ul {
@@ -313,6 +322,7 @@
         
         .employability-box li .text {
             flex: 1;
+            color: var(--text-color2, rgb(15, 12, 12)); /* Utilisation correcte de la variable avec valeur de secours */
         }
         
         .employability-box li .highlight {
@@ -335,6 +345,7 @@
             background-color: rgba(0, 33, 71, 0.02);
             border-radius: var(--border-radius);
             transition: var(--transition);
+            
         }
         
         .stat-item:hover {
@@ -398,6 +409,7 @@
             width: 50px;
             height: 2px;
             background-color: var(--secondary-color);
+            font-size: 1.5rem;
         }
         
         .footer-info p {
@@ -609,14 +621,6 @@
                         <div class="info-item">
                             <i class="fas fa-tag"></i>
                             <span class="info-label">Prix:</span> {{ offre.price }} DH
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-users"></i>
-                            <span class="info-label">Places:</span> Limitées
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span class="info-label">Diplôme:</span> Titre d'ingénieur certifié
                         </div>
                         <button class="offer-button">En savoir plus</button>
                     </div>
