@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Django
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+
+# Media files (uploaded user content)
+media/
+!media/.gitkeep
+
+# Migrations (optional: only if you don't want to track them in Git)
+# pages/migrations/
+# pages/migrations/*.py
+# !pages/migrations/__init__.py
+
+# Static files (optional)
+staticfiles/
+static/
+*.tmp
+*.bak
+
+# Virtual environment
+venv/
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
