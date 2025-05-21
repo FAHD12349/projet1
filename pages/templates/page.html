@@ -1,416 +1,643 @@
-{% extends 'nave.html' %}
+{# Chemin: par exemple, templates/votre_app/inscription.html #}
+{% extends "nave.html" %}
 
 {% block content %}
-<style>
-    :root {
-        --primary-color: #2563eb;
-        --primary-hover: #1d4ed8;
-        --secondary-color: #f3f4f6;
-        --text-color2: #1f2937;
-        --text-color: #eff5ff;
-        --text-light: #6b7280;
-        --error-color: #ef4444;
-        --success-color: #10b981;
-        --border-radius: 8px;
-        --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        --transition: all 0.3s ease;
-    }
+{# ======================================================================== #}
+{# DÉBUT DU CONTENU SPÉCIFIQUE À LA PAGE D'INSCRIPTION                    #}
+{# ======================================================================== #}
 
-    body {
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        background-color: #f9fafb;
-        color: var(--text-color2);
-        margin: 0;
-        padding: 0;
-        line-height: 1.6;
-    }
+{# --- Début: Contenu à déplacer dans le <head> de nave.html --- #}
+<head> 
+    {# !!! ATTENTION: Balise <head> mal placée. À déplacer dans nave.html !!! #}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Inscription - EPID</title> 
+    
+    {# Liens CSS (Bootstrap est utilisé pour .container si besoin, sinon juste les icônes) #}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    {# Assurez-vous que la police est chargée (ex: Inter ou Poppins) via nave.html #}
+    {# <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> #}
+    
+    <style>
+        :root {
+            /* Palette de couleurs */
+            --primary-color: #2563eb; /* Bleu primaire */
+            --primary-hover: #1d4ed8; /* Bleu foncé */
+            --secondary-color: #f3f4f6; /* Gris très clair */
+            --text-color-light: #f4f4f5; /* Presque blanc (header) */
+            --text-color-dark: #374151; /* Gris foncé (labels) */
+            --text-color-darker: #111827; /* Noir/Gris très foncé (inputs) */
+            --text-color-muted: #6b7280; /* Gris moyen (placeholders) */
+            --error-color-text: #b91c1c; /* Rouge foncé (texte erreur) */
+            --error-color-bg: #fee2e2; /* Rouge clair (fond erreur) */
+            --error-color-border: #fca5a5; /* Bordure rouge erreur */
+            --success-color: #10b981; /* Vert succès */
+            --border-color: #d1d5db; /* Gris clair bordures */
+            --border-focus-color: var(--primary-color);
+            --input-bg: #ffffff; 
+            --page-bg: #f9fafb; 
+            --card-bg: #ffffff; 
+            --border-radius: 6px; /* Rayon plus subtil */
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.2s ease-in-out; 
+            --font-family: 'Inter', 'Segoe UI', sans-serif; /* Police principale */
+        }
 
-    .registration-container {
-        max-width: 700px;
-        margin: 40px auto;
-        background-color: #fff;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
-        overflow: hidden;
-    }
+        /* Style de base body (appliqué via nave.html ou classe spécifique) */
+        body.registration-page-body { 
+            font-family: var(--font-family);
+            background-color: var(--page-bg);
+            color: var(--text-color-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
 
-    .form-header {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 24px 32px;
-        text-align: center;
-        position: relative;
-    }
-
-    .form-title {
-        margin: 0;
-        font-size: 28px;
-        font-weight: 700;
-        letter-spacing: -0.025em;
-    }
-
-    .form-subtitle {
-        font-size: 16px;
-        font-weight: 400;
-        opacity: 0.9;
-        margin-top: 8px;
-    }
-
-    .form-body {
-        padding: 32px;
-    }
-
-    .form-section {
-        margin-bottom: 28px;
-    }
-
-    .form-section-title {
-        font-size: 18px;
-        font-weight: 600;
-        margin: 0 0 16px 0;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #e5e7eb;
-        color: var(--primary-color);
-    }
-
-    .form-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-bottom: 16px;
-    }
-
-    .form-group {
-        flex: 1 1 calc(50% - 10px);
-        min-width: 240px;
-        margin-bottom: 16px;
-    }
-
-    .form-group.full-width {
-        flex: 1 1 100%;
-    }
-
-    label {
-        display: block;
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 6px;
-        color: var(--text-color2);
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="number"],
-    input[type="date"],
-    select {
-        width: 100%;
-        padding: 12px 16px;
-        border: 1px solid #d1d5db;
-        border-radius: var(--border-radius);
-        font-size: 15px;
-        transition: var(--transition);
-        box-sizing: border-box;
-        color: var(--text-color);
-        background-color: #fff;
-    }
-
-    input:focus,
-    select:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-
-    .file-upload {
-        position: relative;
-        display: inline-block;
-        width: 100%;
-    }
-
-    .file-upload-label {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        padding: 12px 16px;
-        background-color: var(--secondary-color);
-        border: 1px dashed #d1d5db;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        font-size: 15px;
-        font-weight: 500;
-        transition: var(--transition);
-        color: var(--text-light);
-    }
-
-    .file-upload-label:hover {
-        background-color: #e5e7eb;
-    }
-
-    .file-upload-label svg {
-        margin-right: 8px;
-    }
-
-    .file-upload input[type="file"] {
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 0;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
-    }
-
-    .form-footer {
-        padding: 24px 32px;
-        background-color: #f9fafb;
-        border-top: 1px solid #e5e7eb;
-        text-align: right;
-    }
-
-    .btn {
-        display: inline-block;
-        padding: 12px 24px;
-        border: none;
-        border-radius: var(--border-radius);
-        font-size: 16px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: var(--transition);
-        text-align: center;
-    }
-
-    .btn-primary {
-        background-color: var(--primary-color);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background-color: var(--primary-hover);
-    }
-
-    .hidden {
-        display: none;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
         .registration-container {
-            margin: 20px;
-            max-width: 100%;
+            max-width: 750px; /* Légèrement plus large */
+            margin: 50px auto; /* Plus de marge */
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden; 
         }
-        
+
+        .form-header {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 28px 32px; /* Padding augmenté */
+            text-align: center;
+            border-bottom: 1px solid var(--primary-hover); 
+        }
+
+        .form-title {
+            margin: 0;
+            font-size: 24px; /* Ajusté */
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .form-subtitle {
+            font-size: 15px; 
+            font-weight: 400;
+            opacity: 0.9; 
+            margin-top: 8px;
+        }
+
+        .form-body {
+            padding: 32px 40px; /* Plus de padding horizontal */
+        }
+
+        .form-section {
+            margin-bottom: 32px; 
+        }
+        .form-section:last-of-type {
+             margin-bottom: 0; 
+         }
+
+        .form-section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 24px 0; /* Plus d'espace sous titre section */
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            color: var(--primary-color);
+            display: flex; /* Pour icône optionnelle */
+            align-items: center;
+        }
+         /* Optionnel: icône avant titre section */
+        .form-section-title i {
+             margin-right: 8px;
+             font-size: 1.1em;
+        }
+
         .form-row {
-            flex-direction: column;
-            gap: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px; /* Espace augmenté */
+            margin-bottom: 20px; /* Espace augmenté */
         }
-        
+         .form-row:last-child {
+              margin-bottom: 0; 
+         }
+
         .form-group {
-            flex: 1 1 100%;
+            flex: 1 1 calc(50% - 12px); /* Ajusté pour le nouveau gap */
+            min-width: 220px; 
+        }
+
+        .form-group.full-width {
+            flex: 1 1 100%; 
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px; 
+            color: var(--text-color-dark);
+        }
+        label.required::after { /* Indicateur visuel pour champs requis */
+             content: " *";
+             color: var(--error-color-text);
+             font-weight: normal;
+        }
+
+        /* Style commun inputs/select */
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        input[type="file"], 
+        select {
+            width: 100%;
+            padding: 11px 14px; 
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: var(--transition);
+            box-sizing: border-box;
+            color: var(--text-color-darker);
+            background-color: var(--input-bg);
+            font-family: inherit; /* Hériter la police */
         }
         
-        .form-body, .form-footer {
-            padding: 20px;
+        /* Style spécifique input readonly */
+         input[readonly] {
+             background-color: #f9fafb; /* Fond différent */
+             cursor: not-allowed;
+             opacity: 0.7;
+         }
+
+        /* Style select avec flèche custom */
+        select {
+             appearance: none;
+             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+             background-position: right 0.7rem center;
+             background-repeat: no-repeat;
+             background-size: 1.2em 1.2em;
+             padding-right: 2.8rem; /* Plus d'espace pour flèche */
         }
-    }
+        /* Style option désactivée/sélectionnée */
+        select option[disabled] {
+             color: #9ca3af;
+        }
 
-    /* Animation */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+        input::placeholder { 
+            color: var(--text-color-muted);
+            opacity: 0.9;
+        }
 
-    .animate-fade-in {
-        animation: fadeIn 0.5s ease-out forwards;
-    }
-</style>
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--border-focus-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); /* Ombre focus améliorée */
+        }
+        
+        /* Input fichier caché */
+        input[type="file"].actual-file-input {
+            position: absolute; left: 0; top: 0; opacity: 0;
+            width: 100%; height: 100%; cursor: pointer; z-index: 10;
+        }
+        
+        .file-upload { position: relative; display: block; width: 100%; }
 
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centrer contenu */
+            width: 100%;
+            padding: 11px 14px;
+            background-color: var(--secondary-color);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: var(--transition);
+            color: var(--text-color-muted);
+            text-align: center;
+            overflow: hidden; 
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .file-upload-label:hover {
+            background-color: #e5e7eb;
+            border-color: #adb5bd;
+        }
+
+        .file-upload-label svg {
+            margin-right: 8px; width: 20px; height: 20px; flex-shrink: 0; 
+            color: var(--text-color-muted); /* Icône grise */
+        }
+        
+        /* Style spécifique quand un fichier est sélectionné */
+        .file-upload-label.has-file {
+            background-color: #e0f2fe; /* Fond bleu clair */
+            border-color: var(--primary-color);
+            color: var(--text-color-darker);
+            font-weight: 500;
+        }
+         .file-upload-label.has-file svg {
+              color: var(--primary-color); /* Icône bleue */
+         }
+
+
+        /* Pied de formulaire */
+        .form-footer {
+            padding: 24px 40px;
+            background-color: #f9fafb; 
+            border-top: 1px solid #e5e7eb;
+            text-align: right; 
+        }
+
+        .btn {
+            display: inline-flex; /* Pour aligner icône et texte */
+            align-items: center;
+            justify-content: center;
+            gap: 8px; /* Espace entre icône et texte */
+            padding: 11px 28px; 
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 15px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none; 
+        }
+
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover, .btn-primary:focus { background-color: var(--primary-hover); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
+
+        /* Cacher éléments */
+        .hidden { display: none !important; }
+        
+        /* Message d'erreur */
+        .error-message {
+            background-color: var(--error-color-bg); 
+            color: var(--error-color-text); 
+            border: 1px solid var(--error-color-border); 
+            padding: 14px 18px; 
+            border-radius: var(--border-radius);
+            margin-bottom: 24px; 
+            font-weight: 500;
+            text-align: center;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            gap: 8px; 
+        }
+        .error-message::before {
+             content: '\F62A'; 
+             font-family: 'bootstrap-icons';
+             font-size: 1.2em;
+        }
+        
+        /* Style pour les erreurs de champ Django */
+        .field-error {
+             color: var(--error-color-text);
+             font-size: 0.85rem; /* Plus petit */
+             font-weight: 500;
+             margin-top: 6px; /* Espace sous l'input */
+         }
+         /* Optionnel: mettre une bordure rouge sur l'input en erreur */
+         /* input.error, select.error { border-color: var(--error-color-border) !important; } */
+
+
+        /* Styles responsifs */
+        @media (max-width: 768px) {
+            .registration-container { margin: 20px 15px; }
+            .form-row { flex-direction: column; gap: 20px; margin-bottom: 20px; }
+            .form-group { flex: 1 1 100%; min-width: unset; }
+            .form-body, .form-footer { padding: 24px; }
+            .form-header { padding: 20px 24px; }
+            .form-title { font-size: 20px; }
+            .form-subtitle { font-size: 14px; }
+            .form-section-title { font-size: 17px; margin-bottom: 16px; }
+            .btn { width: 100%; } /* Bouton pleine largeur sur mobile */
+        }
+
+        /* Animation */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+</head> 
+{# --- Fin: Contenu normalement placé dans le <head> de nave.html --- #}
+
+{# --- Début: Contenu visible de la page --- #}
 <div class="registration-container animate-fade-in">
     <div class="form-header">
-        <h2 class="form-title">Inscription</h2>
-        <p class="form-subtitle">Créez votre compte en quelques étapes simples</p>
+        <h2 class="form-title">Inscription Étudiant</h2>
+        <p class="form-subtitle">Rejoignez EPID en remplissant ce formulaire</p>
     </div>
 
-    <form action="{% url 'inscription' %}" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
+    <form action="{% url 'inscription' %}" method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %} 
         
         <div class="form-body">
+            
+            {# Affichage Erreurs Globales (non liées à un champ) #}
+            {% if error_message %}
+            <div class="error-message animate-fade-in" role="alert">
+                {{ error_message }}
+            </div>
+            {% endif %}
+             {% if form.non_field_errors %}
+                 <div class="error-message animate-fade-in" role="alert">
+                     {% for error in form.non_field_errors %}
+                         <span>{{ error }}</span>{% if not forloop.last %}<br>{% endif %}
+                     {% endfor %}
+                 </div>
+             {% endif %}
+
+            {# Section 1: Informations Personnelles #}
             <div class="form-section">
-                <h3 class="form-section-title">Informations personnelles</h3>
-                
+                <h3 class="form-section-title"><i class="bi bi-person-fill"></i>Informations personnelles</h3>
+                {% csrf_token %}
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="nom">Nom</label>
-                        <input type="text" id="nom" name="nom" placeholder="Entrez votre nom" required>
+                        <label for="nom" class="required">Nom</label> 
+                        <input type="text" id="nom" name="nom" value="{{ form.nom.value|default:'' }}" placeholder="Votre nom de famille" required aria-required="true" {% if form.nom.errors %}class="error"{% endif %}>
+                         {% if form.nom.errors %}
+                             <div class="field-error">{{ form.nom.errors|join:", " }}</div> 
+                         {% endif %}
                     </div>
                     
                     <div class="form-group">
-                        <label for="prenom">Prénom</label>
-                        <input type="text" id="prenom" name="prenom" placeholder="Entrez votre prénom" required>
+                        <label for="prenom" class="required">Prénom</label>
+                        <input type="text" id="prenom" name="prenom" value="{{ form.prenom.value|default:'' }}" placeholder="Votre prénom" required aria-required="true" {% if form.prenom.errors %}class="error"{% endif %}>
+                        {% if form.prenom.errors %}
+                             <div class="field-error">{{ form.prenom.errors|join:", " }}</div> 
+                         {% endif %}
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="exemple@domaine.com" required>
+                        <label for="email" class="required">Email</label>
+                        <input type="email" id="email" name="email" value="{{ request.user.email }}" readonly required aria-required="true" {% if form.email.errors %}class="error"{% endif %}>
+                         {% if form.email.errors %}
+                             <div class="field-error">{{ form.email.errors|join:", " }}</div> 
+                         {% endif %}
                     </div>
                     
                     <div class="form-group">
-                        <label for="telephone">Téléphone</label>
-                        <input type="text" id="telephone" name="telephone" placeholder="+212 6XX XXX XXX" required>
+                        <label for="telephone" class="required">Téléphone</label>
+                        <input type="text" id="telephone" name="telephone" value="{{ form.telephone.value|default:'' }}" placeholder="+212 6 XX XX XX XX" required aria-required="true" {% if form.telephone.errors %}class="error"{% endif %}>
+                         {% if form.telephone.errors %}
+                             <div class="field-error">{{ form.telephone.errors|join:", " }}</div> 
+                         {% endif %}
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="date_naissance">Date de naissance</label>
-                        <input type="date" id="date_naissance" name="date_naissance" required>
+                        <label for="date_naissance" class="required">Date de naissance</label>
+                        <input type="date" id="date_naissance" name="date_naissance" value="{{ form.date_naissance.value|default:''|date:'Y-m-d' }}" required aria-required="true" {% if form.date_naissance.errors %}class="error"{% endif %}>
+                         {% if form.date_naissance.errors %}
+                             <div class="field-error">{{ form.date_naissance.errors|join:", " }}</div> 
+                         {% endif %}
                     </div>
                     
                     <div class="form-group">
-                        <label for="age">Âge</label>
-                        <input type="number" id="age" name="age" placeholder="Votre âge" required>
+                        <label for="age">Âge</label> 
+                        <input type="number" id="age" name="age" value="{{ form.age.value|default:'' }}" placeholder="Calculé" readonly> 
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="sexe">Sexe</label>
-                        <select id="sexe" name="sexe" required>
-                            <option value="" disabled selected>Sélectionnez</option>
-                            <option value="homme">Homme</option>
-                            <option value="femme">Femme</option>
+                        <label for="sexe" class="required">Sexe</label>
+                        <select id="sexe" name="sexe" required aria-required="true" {% if form.sexe.errors %}class="error"{% endif %}>
+                            <option value="" disabled {% if not form.sexe.value %}selected{% endif %}>Sélectionnez...</option>
+                            {# Adapter les valeurs si elles diffèrent dans le modèle/form #}
+                            <option value="homme" {% if form.sexe.value == "homme" %}selected{% endif %}>Homme</option>
+                            <option value="femme" {% if form.sexe.value == "femme" %}selected{% endif %}>Femme</option>
                         </select>
+                         {% if form.sexe.errors %}
+                             <div class="field-error">{{ form.sexe.errors|join:", " }}</div> 
+                         {% endif %}
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="date_inscription">Date d'inscription</label>
-                        <input type="date" id="date_inscription" name="date_inscription" required>
+                     <div class="form-group">
+                        <label for="CNIE" class="required">CNIE</label> {# Carte Nationale d'Identité Électronique #}
+                        <input type="text" id="CNIE" name="CNIE" value="{{ form.CNIE.value|default:'' }}" placeholder="Ex: AB123456" required aria-required="true" {% if form.CNIE.errors %}class="error"{% endif %}>
+                        {% if form.CNIE.errors %}
+                            <div class="field-error">{{ form.CNIE.errors|join:", " }}</div> 
+                        {% endif %}
                     </div>
                 </div>
             </div>
             
+            {# Section 2: Adresse #}
             <div class="form-section">
-                <h3 class="form-section-title">Adresse et localisation</h3>
+                <h3 class="form-section-title"><i class="bi bi-geo-alt-fill"></i>Adresse et localisation</h3>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="pays">Pays</label>
-                        <select id="pays" name="pays" onchange="showCity()" required>
-                            <option value="" disabled selected>Sélectionnez un pays</option>
-                            <option value="morocco">Maroc</option>
-                            <option value="algerie">Algérie</option>
-                            <option value="tunisie">Tunisie</option>
-                            <option value="france">France</option>
-                            <option value="italie">Italie</option>
-                            <option value="espagne">Espagne</option>
-                            <option value="allemagne">Allemagne</option>
-                            <option value="royaume_uni">Royaume-Uni</option>
-                            <option value="etats_unis">États-Unis</option>
-                            <option value="canada">Canada</option>
-                            <option value="australie">Australie</option>
-                            <option value="japon">Japon</option>
-                            <option value="chine">Chine</option>
+                        <label for="pays" class="required">Pays</label>
+                        <select id="pays" name="pays" required aria-required="true" {% if form.pays.errors %}class="error"{% endif %}>
+                            <option value="" disabled {% if not form.pays.value %}selected{% endif %}>Sélectionnez un pays</option>
+                            <option value="morocco" {% if form.pays.value == "morocco" %}selected{% endif %}>Maroc</option>
+                            <option value="algerie" {% if form.pays.value == "algerie" %}selected{% endif %}>Algérie</option>
+                            <option value="tunisie" {% if form.pays.value == "tunisie" %}selected{% endif %}>Tunisie</option>
+                            <option value="france" {% if form.pays.value == "france" %}selected{% endif %}>France</option>
+                            {# ... autres pays ... #}
                         </select>
+                         {% if form.pays.errors %}
+                             <div class="field-error">{{ form.pays.errors|join:", " }}</div> 
+                         {% endif %}
                     </div>
                     
                     <div class="form-group hidden" id="ville-group">
-                        <label for="ville">Ville</label>
-                        <select id="ville" name="ville">
-                            <option value="" disabled selected>Sélectionnez une ville</option>
-                            <option value="casablanca">Casablanca</option>
-                            <option value="marrakech">Marrakech</option>
-                            <option value="tanger">Tanger</option>
-                            <option value="agadir">Agadir</option>
-                            <option value="fes">Fès</option>
-                            <option value="rabat">Rabat</option>
-                            <option value="essaouira">Essaouira</option>
-                            <option value="oujda">Oujda</option>
-                            <option value="kenitra">Kénitra</option>
-                            <option value="taza">Taza</option>
-                            <option value="berrechid">Berrechid</option>
-                            <option value="khouribga">Khouribga</option>
-                            <option value="safi">Safi</option>
-                            <option value="larache">Larache</option>
-                            <option value="nador">Nador</option>
-                            <option value="berkan">Berkane</option>
-                            <option value="tetouan">Tétouan</option>
-                            <option value="khemisset">Khemisset</option>
+                        <label for="ville" id="ville-label">Ville (si Maroc)</label> {# Label sera ajusté par JS #}
+                        <select id="ville" name="ville" {% if form.ville.errors %}class="error"{% endif %}> {# Required ajouté par JS #}
+                            <option value="" disabled {% if not form.ville.value %}selected{% endif %}>Sélectionnez une ville</option>
+                            <option value="casablanca" {% if form.ville.value == "casablanca" %}selected{% endif %}>Casablanca</option>
+                            <option value="rabat" {% if form.ville.value == "rabat" %}selected{% endif %}>Rabat</option>
+                            <option value="marrakech" {% if form.ville.value == "marrakech" %}selected{% endif %}>Marrakech</option>
+                             {# ... autres villes marocaines ... #}
                         </select>
+                         {% if form.ville.errors %}
+                             <div class="field-error">{{ form.ville.errors|join:", " }}</div> 
+                         {% endif %}
                     </div>
                 </div>
                 
                 <div class="form-group full-width">
-                    <label for="adresse">Adresse complète</label>
-                    <input type="text" id="adresse" name="adresse" placeholder="Rue, numéro, code postal" required>
+                    <label for="adresse" class="required">Adresse complète</label>
+                    <input type="text" id="adresse" name="adresse" value="{{ form.adresse.value|default:'' }}" placeholder="Ex: 12 Rue exemple, Quartier..." required aria-required="true" {% if form.adresse.errors %}class="error"{% endif %}>
+                     {% if form.adresse.errors %}
+                         <div class="field-error">{{ form.adresse.errors|join:", " }}</div> 
+                     {% endif %}
                 </div>
             </div>
             
+             {# Section 3: Profil Étudiant #}
             <div class="form-section">
-                <h3 class="form-section-title">Profil</h3>
-                
-                <div class="form-row">
+                 <h3 class="form-section-title"><i class="bi bi-person-workspace"></i>Profil Étudiant</h3>
+                 
+                 <div class="form-row">
                     <div class="form-group">
-                        <label for="niveau">Niveau</label>
-                        <select id="niveau" name="niveau" required>
-                            <option value="" disabled selected>Sélectionnez votre niveau</option>
-                            <option value="debutant">Débutant</option>
-                            <option value="intermediaire">Intermédiaire</option>
-                            <option value="avance">Avancé</option>
+                        <label for="specialites" class="required">Spécialité visée</label> 
+                        <input type="text" id="specialites" name="specialites" value="{{ form.specialites.value|default:'' }}" placeholder="Ex: Génie Logiciel, IA..." required aria-required="true" {% if form.specialites.errors %}class="error"{% endif %}>
+                        {% if form.specialites.errors %}
+                            <div class="field-error">{{ form.specialites.errors|join:", " }}</div> 
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="niveau" class="required">Niveau actuel</label>
+                        <select id="niveau" name="niveau" required aria-required="true" {% if form.niveau.errors %}class="error"{% endif %}>
+                            <option value="" disabled {% if not form.niveau.value %}selected{% endif %}>Sélectionnez...</option>
+                            <option value="debutant" {% if form.niveau.value == "debutant" %}selected{% endif %}>Débutant</option>
+                            <option value="intermediaire" {% if form.niveau.value == "intermediaire" %}selected{% endif %}>Intermédiaire</option>
+                            <option value="avance" {% if form.niveau.value == "avance" %}selected{% endif %}>Avancé</option>
                         </select>
+                        {% if form.niveau.errors %}
+                            <div class="field-error">{{ form.niveau.errors|join:", " }}</div> 
+                        {% endif %}
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="photo">Photo de profil</label>
+                 </div>
+
+                 <div class="form-row">
+                    <div class="form-group full-width"> {# Prend toute la largeur #}
+                        <label for="photo">Photo de profil (Optionnel)</label> 
                         <div class="file-upload">
-                            <label class="file-upload-label">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                                </svg>
-                                Choisir une photo
-                            </label>
-                            <input type="file" id="photo" name="photo" accept="image/*" required>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                             <label class="file-upload-label" for="photo"> 
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cloud-arrow-up-fill me-2" viewBox="0 0 16 16">
+                                     <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0z"/>
+                                 </svg>
+                                 <span class="file-name-display">Choisir une photo</span>
+                             </label>
+                             {# L'input réel pour le formulaire Django - peut être stylé différemment si form est passé #}
+                             <input class="actual-file-input" type="file" id="photo" name="photo" accept="image/png, image/jpeg, image/jpg"> 
+                         </div>
+                         <small class="form-text text-muted d-block mt-1">Formats: PNG, JPG/JPEG. Taille max: 2Mo.</small>
+                         {% if form.photo.errors %}
+                             <div class="field-error">{{ form.photo.errors|join:", " }}</div> 
+                         {% endif %}
+                     </div>
+                 </div>
+             </div>
+            
+             {# Champ caché pour la date d'inscription (rempli par JS) #}
+             <input type="hidden" id="date_inscription" name="date_inscription" required>
+
+        </div> {# Fin form-body #}
         
         <div class="form-footer">
-            <button type="submit" class="btn btn-primary">Valider l'inscription</button>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-lg me-1"></i>
+                Valider l'inscription
+            </button>
         </div>
     </form>
 </div>
 
+{# --- Script JS spécifique à cette page --- #}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the form
-        showCity();
-        
-        // Show file name when selected
-        document.getElementById('photo').addEventListener('change', function() {
-            const fileName = this.files[0]?.name;
-            if (fileName) {
-                const label = this.previousElementSibling;
-                label.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 22h14a2 2 0 0 0 2-2V7.5L14.5 2H5a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2z"></path>
-                    <polyline points="14 2 14 8 21 8"></polyline>
-                </svg> ${fileName}`;
-            }
-        });
-    });
+    (function() { 
+        'use strict';
 
-    function showCity() {
-        const pays = document.getElementById("pays").value;
-        const villeGroup = document.getElementById("ville-group");
-        if (pays === "morocco") {
-            villeGroup.classList.remove("hidden");
-        } else {
-            villeGroup.classList.add("hidden");
+        // --- Éléments DOM ---
+        const paysSelect = document.getElementById('pays');
+        const villeGroup = document.getElementById('ville-group');
+        const villeSelect = document.getElementById('ville');
+        const villeLabel = document.getElementById('ville-label'); // Ajout pour modifier le label
+        const dateNaissanceInput = document.getElementById('date_naissance');
+        const ageInput = document.getElementById('age');
+        const dateInscriptionInput = document.getElementById('date_inscription');
+        const photoInput = document.getElementById('photo'); // L'input réel caché
+        const photoLabel = photoInput ? photoInput.closest('.file-upload').querySelector('.file-upload-label') : null; // Trouver le label associé
+        const photoFileNameDisplay = photoLabel ? photoLabel.querySelector('.file-name-display') : null; 
+
+        // --- Fonctions ---
+        
+        function toggleCityField() {
+            if (!paysSelect || !villeGroup || !villeSelect || !villeLabel) return; 
+
+            if (paysSelect.value === "morocco") {
+                villeGroup.classList.remove("hidden");
+                villeSelect.setAttribute("required", "required");
+                villeLabel.classList.add("required"); // Ajouter l'astérisque au label
+                villeSelect.disabled = false;
+            } else {
+                villeGroup.classList.add("hidden");
+                villeSelect.removeAttribute("required");
+                villeLabel.classList.remove("required"); // Enlever l'astérisque
+                villeSelect.disabled = true;
+                villeSelect.value = ""; 
+            }
         }
-    }
+
+        function updateAge() {
+            if (!dateNaissanceInput || !ageInput) return;
+            const birthDateString = dateNaissanceInput.value;
+            if (!birthDateString) { ageInput.value = ""; return; }
+            try {
+                 const birthDate = new Date(birthDateString);
+                 const today = new Date();
+                 if (isNaN(birthDate.getTime()) || birthDate > today) { ageInput.value = ""; return; }
+                 let age = today.getFullYear() - birthDate.getFullYear();
+                 const monthDiff = today.getMonth() - birthDate.getMonth();
+                 if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) { age--; }
+                 ageInput.value = (age >= 0) ? age : ""; 
+            } catch(e) { console.error("Erreur calcul âge:", e); ageInput.value = ""; }
+        }
+
+        function updatePhotoLabel() {
+            if (!photoInput || !photoLabel || !photoFileNameDisplay) return;
+            const files = photoInput.files;
+            const defaultText = "Choisir une photo";
+            const defaultIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cloud-arrow-up-fill me-2" viewBox="0 0 16 16"><path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2m2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0z"/> </svg>`;
+            const fileSelectedIconHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-file-earmark-check-fill me-2" viewBox="0 0 16 16"><path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1m1.354 4.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708.708"/> </svg>`;
+
+            if (files && files.length > 0) {
+                photoFileNameDisplay.textContent = files[0].name;
+                photoLabel.classList.add('has-file'); // Ajouter classe pour style différent
+                 // Mettre à jour l'icône
+                 if(photoLabel.querySelector('svg')) photoLabel.querySelector('svg').outerHTML = fileSelectedIconHTML;
+                 else photoLabel.insertAdjacentHTML('afterbegin', fileSelectedIconHTML);
+
+            } else {
+                photoFileNameDisplay.textContent = defaultText;
+                photoLabel.classList.remove('has-file'); // Retirer classe
+                 // Remettre l'icône par défaut
+                 if(photoLabel.querySelector('svg')) photoLabel.querySelector('svg').outerHTML = defaultIconHTML;
+                 else photoLabel.insertAdjacentHTML('afterbegin', defaultIconHTML);
+            }
+        }
+
+        function setInscriptionDate() {
+             if (!dateInscriptionInput) return;
+             try {
+                  // Vérifier si une valeur existe déjà (pour pré-remplissage par Django)
+                  if (!dateInscriptionInput.value) {
+                      const today = new Date().toISOString().split('T')[0];
+                      dateInscriptionInput.value = today;
+                  }
+             } catch(e) { console.error("Erreur date inscription:", e); }
+        }
+
+        // --- Initialisation et Écouteurs ---
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleCityField(); 
+            setInscriptionDate();
+            updateAge(); 
+
+            if (paysSelect) paysSelect.addEventListener('change', toggleCityField);
+            if (dateNaissanceInput) dateNaissanceInput.addEventListener('change', updateAge);
+            if (photoInput) photoInput.addEventListener('change', updatePhotoLabel);
+            
+             // Initialiser le label photo si un fichier est déjà sélectionné (cas rechargement page après erreur)
+            updatePhotoLabel(); 
+        });
+
+    })(); 
 </script>
+
 {% endblock %}

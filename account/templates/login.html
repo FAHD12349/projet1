@@ -124,8 +124,8 @@
                     if (data.status === 'success') {
                         alert(data.message);
                         localStorage.setItem('access_token', data.access_token);  
-                        localStorage.setItem('refresh_token', data.refresh_token);  // تخزين refresh_token
-                        window.location.href = '/'; 
+                        localStorage.setItem('refresh_token', data.refresh_token);  
+                        window.location.href = '/inscription/'; 
                     } else {
                         alert(data.message);
                     }

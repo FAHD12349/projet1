@@ -2,359 +2,268 @@
 <html lang="fr">
 <head>
     <title>EPID - École Polytechnique de l'Innovation Durable</title>
-    {% load static %}
+    {% load static %} {# Load static files tag #}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* Font Import */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-        
+
+        /* CSS Variables */
         :root {
             --primary-color: #095a2c;
             --hover-color: #064221;
             --accent-color: #16c172;
             --text-color: #ffffff;
+            --darker-primary: #074832;
             --transition-speed: 0.3s;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #074832 100%);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 5%;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            transition: all var(--transition-speed) ease;
-        }
-        
-        .navbar.scrolled {
-            padding: 10px 5%;
-            background: rgba(7, 70, 36, 0.95);
-            backdrop-filter: blur(10px);
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo img {
-            height: 50px;
-            margin-right: 15px;
-            transition: transform var(--transition-speed) ease;
-        }
-        
-        .logo:hover img {
-            transform: scale(1.1);
-        }
-        
-        .logo-text {
-            color: var(--text-color);
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all var(--transition-speed) ease;
-        }
-        
-        .logo:hover .logo-text {
-            color: var(--accent-color);
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        
-        .nav-links a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 500;
-            padding: 10px 15px;
-            border-radius: 6px;
-            position: relative;
-            overflow: hidden;
-            transition: all var(--transition-speed) ease;
-            z-index: 1;
-        }
-        
-        .nav-links a::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background-color: var(--accent-color);
-            transform: translateY(3px);
-            transition: transform var(--transition-speed) ease;
-            z-index: -1;
-        }
-        
-        .nav-links a:hover {
-            color: var(--accent-color);
-        }
-        
-        .nav-links a:hover::before {
-            transform: translateY(0);
-        }
-        
-        .nav-links a.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--accent-color);
-        }
-        
-        .nav-links a.active::before {
-            transform: translateY(0);
-        }
-        
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 30px;
-            height: 21px;
-            cursor: pointer;
-        }
-        
-        .menu-toggle span {
-            display: block;
-            height: 3px;
-            width: 100%;
-            background-color: var(--text-color);
-            border-radius: 3px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-login {
-            background-color: var(--accent-color);
-            color: var(--primary-color) !important;
-            padding: 10px 20px !important;
-            border-radius: 30px !important;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(22, 193, 114, 0.2);
-            transition: all var(--transition-speed) ease;
-        }
-        
-        .btn-login:hover {
-            background-color: #13a260;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(22, 193, 114, 0.3);
-        }
-        
-        .btn-login::before {
-            display: none;
-        }
-        
-        .btn-logout {
-            border: 2px solid var(--accent-color);
-            color: var(--accent-color) !important;
-            padding: 8px 20px !important;
-            border-radius: 30px !important;
-            font-weight: 600;
-            transition: all var(--transition-speed) ease;
-        }
-        
-        .btn-logout:hover {
-            background-color: rgba(22, 193, 114, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .btn-logout::before {
-            display: none;
-        }
-        
-        /* Animation pour la navbar lors du chargement */
-        @keyframes fadeIn {
-            from { 
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .navbar {
-            animation: fadeIn 0.8s ease forwards;
-        }
-        
-        .nav-links a {
-            opacity: 0;
-            animation: fadeIn 0.5s ease forwards;
-        }
-        
-        .nav-links a:nth-child(1) { animation-delay: 0.2s; }
-        .nav-links a:nth-child(2) { animation-delay: 0.3s; }
-        .nav-links a:nth-child(3) { animation-delay: 0.4s; }
-        .nav-links a:nth-child(4) { animation-delay: 0.5s; }
-        .nav-links a:nth-child(5) { animation-delay: 0.6s; }
-        
+
+        /* Global Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* Body Styles */
+        body { margin: 0; font-family: 'Poppins', sans-serif; background-color: #f8f9fa; color: #333; }
+
+        /* Navbar Base Styles */
+        .navbar { background: linear-gradient(135deg, var(--primary-color) 0%, var(--darker-primary) 100%); display: flex; align-items: center; justify-content: space-between; padding: 15px 5%; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); position: sticky; top: 0; z-index: 1000; transition: all var(--transition-speed) ease; }
+        .navbar.scrolled { padding: 10px 5%; background: rgba(7, 70, 36, 0.95); backdrop-filter: blur(10px); }
+
+        /* Logo Styles */
+        .logo { display: flex; align-items: center; text-decoration: none; }
+        .logo img { height: 50px; margin-right: 15px; transition: transform var(--transition-speed) ease; }
+        .logo:hover img { transform: scale(1.1); }
+        .logo-text { color: var(--text-color); font-size: 18px; font-weight: 600; letter-spacing: 0.5px; transition: color var(--transition-speed) ease; }
+        .logo-text .full-name { display: inline; }
+        .logo:hover .logo-text { color: var(--accent-color); }
+
+        /* Navigation Links Styles */
+        .nav-links { display: flex; gap: 10px; align-items: center; }
+        /* Style all links within nav-links, except buttons */
+        .nav-links a:not(.btn-login):not(.btn-logout) { color: var(--text-color); text-decoration: none; font-size: 16px; font-weight: 500; padding: 10px 15px; border-radius: 6px; position: relative; overflow: hidden; transition: all var(--transition-speed) ease; z-index: 1; }
+
+        /* Underline Hover Effect */
+        .nav-links a:not(.btn-login):not(.btn-logout)::before { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background-color: var(--accent-color); transform: translateY(3px); opacity: 0; transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease; z-index: -1; }
+        .nav-links a:not(.btn-login):not(.btn-logout):hover { color: var(--accent-color); }
+        .nav-links a:not(.btn-login):not(.btn-logout):hover::before { transform: translateY(0); opacity: 1; }
+
+        /* Active Link Style */
+        .nav-links a.active:not(.btn-login):not(.btn-logout) { color: var(--accent-color); font-weight: 600; }
+        .nav-links a.active:not(.btn-login):not(.btn-logout)::before { transform: translateY(0); opacity: 1; }
+
+        /* Mobile Menu Toggle (Hamburger) */
+        .menu-toggle { display: none; flex-direction: column; justify-content: space-between; width: 30px; height: 21px; cursor: pointer; z-index: 1001; }
+        .menu-toggle span { display: block; height: 3px; width: 100%; background-color: var(--text-color); border-radius: 3px; transition: all 0.3s ease; }
+
+        /* Button Styles */
+        .btn-login, .btn-logout { padding: 10px 20px !important; border-radius: 30px !important; font-weight: 600; transition: all var(--transition-speed) ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); text-decoration: none; color: var(--text-color); position: relative; z-index: 1; display: inline-block; text-align: center; border: 2px solid transparent; /* Base border */}
+        .btn-login::before, .btn-logout::before { display:none; } /* Ensure no underline from link style */
+        .btn-login { background-color: var(--accent-color); color: var(--primary-color) !important; border-color: var(--accent-color); }
+        .btn-login:hover { background-color: #13a260; border-color: #13a260; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(22, 193, 114, 0.3); }
+        .btn-logout { border: 2px solid var(--accent-color); background-color: transparent; color: var(--accent-color) !important; }
+        .btn-logout:hover { background-color: rgba(22, 193, 114, 0.1); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(22, 193, 114, 0.15); }
+
+        /* Navbar Fade-in Animation */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .navbar { animation: fadeInDown 0.8s ease forwards; }
+
+        /* Responsive Styles */
         @media (max-width: 992px) {
-            .logo-text span {
-                display: none;
-            }
+            .logo-text .full-name { display: none; }
+            .logo-text { font-size: 16px; }
+            .nav-links { gap: 5px; }
+            .nav-links a:not(.btn-login):not(.btn-logout) { padding: 8px 10px; font-size: 15px; }
+            .btn-login, .btn-logout { padding: 8px 15px !important; }
         }
-        
+
         @media (max-width: 768px) {
-            .menu-toggle {
-                display: flex;
-            }
-            
-            .nav-links {
-                position: absolute;
-                top: 80px;
-                left: 0;
-                right: 0;
-                background: var(--primary-color);
-                flex-direction: column;
-                width: 100%;
-                padding: 20px;
-                gap: 15px;
-                border-radius: 0 0 15px 15px;
-                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-                clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
-                transition: all 0.4s ease-out;
-                pointer-events: none;
-            }
-            
-            .nav-links.active {
-                clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-                pointer-events: all;
-            }
-            
-            .nav-links a {
-                width: 100%;
-                text-align: center;
-                padding: 12px;
-                animation: none;
-                opacity: 1;
-            }
-            
-            .btn-login, .btn-logout {
-                margin-top: 10px;
-                width: 80%;
-            }
-            
-            .menu-toggle.active span:nth-child(1) {
-                transform: translateY(9px) rotate(45deg);
-            }
-            
-            .menu-toggle.active span:nth-child(2) {
-                opacity: 0;
-            }
-            
-            .menu-toggle.active span:nth-child(3) {
-                transform: translateY(-9px) rotate(-45deg);
-            }
+            .menu-toggle { display: flex; }
+            .nav-links { position: absolute; top: 100%; left: 0; right: 0; background: var(--primary-color); flex-direction: column; width: 100%; padding: 0; gap: 0; border-radius: 0 0 15px 15px; box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); transition: clip-path 0.4s ease-out, top var(--transition-speed) ease; pointer-events: none; opacity: 0; }
+            .navbar.scrolled .nav-links { top: 70px; } /* Adjust as needed */
+            .nav-links.active { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); pointer-events: all; opacity: 1; padding: 10px 0; }
+
+             /* Style all direct children links/buttons in mobile menu */
+             /* Target anchor tags directly within nav-links when active */
+            .nav-links.active > a {
+                 display: block;
+                 width: 100%;
+                 text-align: center;
+                 padding: 12px 20px; /* Consistent padding */
+                 border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separator */
+                 border-radius: 0;
+             }
+             .nav-links.active > a:last-of-type {
+                  border-bottom: none;
+              }
+              /* Specifically style buttons slightly differently if needed */
+             .nav-links.active > a.btn-login,
+             .nav-links.active > a.btn-logout {
+                 width: calc(100% - 40px); /* Make buttons slightly narrower */
+                 margin: 10px auto; /* Center with margin */
+                 padding: 12px 20px !important; /* Ensure padding overrides */
+                 border-bottom: none; /* Buttons don't need the bottom border */
+             }
+
+            .nav-links.active a::before { display: none; } /* Remove desktop underline effect */
+            .nav-links.active a.active:not(.btn-login):not(.btn-logout) { background-color: rgba(255, 255, 255, 0.1); color: var(--accent-color); } /* Mobile active style */
+
+            /* Hamburger Animation */
+            .menu-toggle.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+            .menu-toggle.active span:nth-child(2) { opacity: 0; }
+            .menu-toggle.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
         }
-        
-        /* Contenu d'exemple pour montrer la navbar */
-        .content {
-            padding: 50px 5%;
-            min-height: 100vh;
-        }
-        
-        h1 {
-            margin-bottom: 20px;
-            color: var(--primary-color);
-        }
-        
-        p {
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
+
+        /* Example Content Styles */
+        .content { padding: 80px 5% 50px 5%; min-height: 100vh; }
+        h1 { margin-bottom: 20px; color: var(--primary-color); }
+        p { line-height: 1.6; margin-bottom: 20px; }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <a href="{% url 'about' %}" class="logo">
+    <nav class="navbar" id="main-navbar">
+        {# --- Logo Section --- #}
+        <a href="{% url 'home' %}" class="logo">
             <img src="{% static 'image/logo-favicon.png' %}" alt="Logo EPID">
-            <span class="logo-text">EPID – École Polytechnique de l'Innovation Durable</span>
+            <span class="logo-text">EPID <span class="full-name">– École Polytechnique de l'Innovation Durable</span></span>
         </a>
-        
-        <div class="menu-toggle">
+
+        {# --- Mobile Menu Toggle Button --- #}
+        <div class="menu-toggle" id="menu-toggle">
             <span></span>
             <span></span>
             <span></span>
         </div>
-        
-        <div class="nav-links">
-            <a href="{% url 'home' %}" class="active">Accueil</a>
+
+        {# --- Navigation Links --- #}
+        <div class="nav-links" id="nav-links">
+            <a href="{% url 'home' %}">Accueil</a>
             <a href="{% url 'about' %}">À propos</a>
             <a href="{% url 'offre' %}">Offres</a>
-            <a href="{% url 'inscription' %}">Inscription</a>
+
+            {# Conditional Inscription Link #}
+            <a href="{% if user.is_authenticated %}{% url 'inscription' %}{% else %}{% url 'login' %}?next={% url 'inscription' %}{% endif %}">Inscription</a>
+
+            
             {% if user.is_authenticated %}
+              
+                <a href="{% url 'info' %}">Info</a> 
+              
                 <a href="{% url 'logout' %}" class="btn-logout">Déconnexion</a>
             {% else %}
+             
                 <a href="{% url 'login' %}" class="btn-login">Connexion</a>
             {% endif %}
         </div>
     </nav>
-    
+
+    {# --- Main Content Block --- #}
     {% block content %}
     <div class="content">
         <h1>Bienvenue à l'École Polytechnique de l'Innovation Durable</h1>
-        <p>Ceci est un contenu d'exemple pour montrer la navbar. Vous pouvez remplacer cette section par votre contenu réel.</p>
+        <p>Ceci est un contenu d'exemple. Remplacez ce bloc par le contenu spécifique à chaque page.</p>
+        <p>Si vous êtes connecté, le lien "Info" apparaît maintenant normalement à côté du bouton "Déconnexion".</p>
+        <p>Si vous n'êtes pas connecté, le lien "Info" n'existe pas et le bouton est "Connexion". Cliquer sur "Inscription" vous redirigera d'abord vers la page de connexion.</p>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem quos quod cumque, praesentium libero optio corrupti dolor assumenda delectus aut eveniet maiores, quasi ratione! Inventore vel sunt blanditiis quo ipsum?</p>
     </div>
     {% endblock %}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Toggle menu sur mobile
-            const menuToggle = document.querySelector('.menu-toggle');
-            const navLinks = document.querySelector('.nav-links');
-            
-            if (menuToggle) {
+            const menuToggle = document.getElementById('menu-toggle');
+            const navLinks = document.getElementById('nav-links');
+            const navbar = document.getElementById('main-navbar');
+
+            // 1. Mobile Menu Toggle Functionality
+            if (menuToggle && navLinks) {
                 menuToggle.addEventListener('click', function() {
                     navLinks.classList.toggle('active');
                     menuToggle.classList.toggle('active');
+                    const navbarHeight = navbar.offsetHeight;
+                    if (navbar.classList.contains('scrolled')) {
+                        navLinks.style.top = '70px'; // Adjust based on scrolled height
+                    } else {
+                        navLinks.style.top = `${navbarHeight}px`;
+                    }
                 });
             }
-            
-            // Animation de la navbar lors du scroll
-            window.addEventListener('scroll', function() {
-                const navbar = document.querySelector('.navbar');
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-            });
-            
-            // Gestion de la page active
+
+            // 2. Navbar Style Change on Scroll
+            let lastScrollY = window.scrollY;
+            if (navbar) {
+                window.addEventListener('scroll', function() {
+                    const currentScrollY = window.scrollY;
+                    if (currentScrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                    if (Math.abs(currentScrollY - lastScrollY) > 10) {
+                        if (navLinks && navLinks.classList.contains('active')) {
+                            navLinks.classList.remove('active');
+                           if (menuToggle) menuToggle.classList.remove('active');
+                        }
+                    }
+                    lastScrollY = currentScrollY;
+                }, { passive: true });
+            }
+
+            // 3. Active Navigation Link Highlighting
             const currentLocation = location.pathname;
-            const navItems = document.querySelectorAll('.nav-links a');
-            
+             // Include the Info link now in the selection for active state
+            const navItems = navLinks ? navLinks.querySelectorAll('a:not(.btn-login):not(.btn-logout)') : [];
+            let isAnyLinkActive = false;
+
             navItems.forEach(item => {
-                // Simplement comparer avec le chemin actuel
-                const href = item.getAttribute('href');
-                if (href === currentLocation) {
-                    navItems.forEach(nav => nav.classList.remove('active'));
+                const itemHref = item.getAttribute('href');
+                if (!itemHref) return;
+                const cleanHref = itemHref.endsWith('/') && itemHref.length > 1 ? itemHref.slice(0, -1) : itemHref;
+                const cleanLocation = currentLocation.endsWith('/') && currentLocation.length > 1 ? currentLocation.slice(0, -1) : currentLocation;
+
+                item.classList.remove('active'); // Reset all
+
+                // Check for exact match or parent path match (excluding root '/')
+                 if (cleanHref && (cleanHref === cleanLocation || (cleanLocation.startsWith(cleanHref + '/') && cleanHref !== '/'))) {
                     item.classList.add('active');
-                } else if (currentLocation === '/' && (href.includes('home') || href === '/')) {
-                    navItems.forEach(nav => nav.classList.remove('active'));
-                    item.classList.add('active');
+                    isAnyLinkActive = true;
                 }
+                 // Handle Home ('/' or '/home/') explicitly
+                 else if ((cleanLocation === '' || cleanLocation === '/home') && (cleanHref === '/' || cleanHref === '/home' || itemHref.includes('home'))) {
+                     item.classList.add('active');
+                     isAnyLinkActive = true;
+                 }
+                 // Handle '/info/' case if needed (should be covered by startsWith)
+                 // else if (cleanLocation === '/info' && cleanHref === '/info') { ... }
+
             });
-        });
+
+            // Fallback for home if no other link matched and we are at root
+             if (!isAnyLinkActive && (currentLocation === '/' || currentLocation.startsWith('/home'))) {
+                 const homeLink = navLinks ? (navLinks.querySelector('a[href="/"]') || navLinks.querySelector('a[href*="home"]')) : null;
+                 if (homeLink) {
+                     homeLink.classList.add('active');
+                 }
+             }
+
+
+             // 4. Close Mobile Menu When a Link is Clicked
+             if (navLinks) {
+                 navLinks.addEventListener('click', (event) => {
+                      // Ensure target is a link within the nav-links area
+                      if (event.target.tagName === 'A' && event.target.closest('#nav-links')) {
+                           if (window.innerWidth <= 768 && navLinks.classList.contains('active')) {
+                                setTimeout(() => {
+                                    navLinks.classList.remove('active');
+                                    if (menuToggle) menuToggle.classList.remove('active');
+                                }, 150);
+                            }
+                      }
+                 });
+             }
+
+            // --- Hover effect JS REMOVED ---
+
+        }); // End of DOMContentLoaded
     </script>
+
 </body>
 </html>

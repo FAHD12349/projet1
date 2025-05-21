@@ -6,6 +6,8 @@ class InscriptionSerializer(serializers.ModelSerializer):
     pernom = serializers.CharField(max_length=50)
     email = serializers.EmailField()
     age = serializers.IntegerField()
+    CNIE= serializers.CharField(max_length=50, required=True)
+    specialites = serializers.CharField(max_length=50, required=True)
     date_inscription = serializers.DateField()
     date_naissance = serializers.DateField()
     adresse = serializers.CharField(max_length=500)    
@@ -14,8 +16,8 @@ class InscriptionSerializer(serializers.ModelSerializer):
     niveau = serializers.CharField(max_length=50)
     pays = serializers.CharField(max_length=50)
     ville = serializers.CharField(max_length=50)
-    photo = serializers.ImageField()
+    photo = serializers.ImageField(required=True)
     
     class Meta:
         model = Inscription
-        fields = ['nom', 'pernom', 'email', 'age', 'date_inscription', 'date_naissance', 'adresse', 'telephone', 'sexe', 'niveau', 'pays', 'ville', 'photo']
+        fields = ['nom', 'pernom', 'email', 'age','CNIE', 'specialites', 'date_inscription', 'date_naissance', 'adresse', 'telephone', 'sexe', 'niveau', 'pays', 'ville', 'photo']
